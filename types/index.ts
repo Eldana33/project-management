@@ -18,8 +18,8 @@ export interface Task {
   id: string
   title: string
   description: string
-  assigneeId: string
-  milestoneId: string
+  assigneeId?: string | null
+  milestoneId?: string | null
   status: TaskStatus
   priority: Priority
   dueDate: string
