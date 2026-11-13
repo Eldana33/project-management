@@ -1,34 +1,45 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/app/prisma'
 
+// UPDATE a member (Edit from Team Directory)
 export async function PATCH(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
     const body = await request.json()
-    
-    if (!body.id) return NextResponse.json({ error: 'User ID required' }, { status: 400 })
 
-    if (body.password && body.password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
-    }
-
-    const updateData: any = {
-      name: body.name,
-      role: body.role,
-    }
-
-    if (body.password) {
-      updateData.password = body.password
-    }
+    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
 
     const member = await prisma.member.update({
-      where: { id: body.id },
-      data: updateData,
+      where: { id },
+      data: { name: body.name, role: body.role },
+    })
+    return NextResponse.json(member)
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+}
+
+// DELETE a member
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) return NextResponse.json({ error: 'Member ID required' }, { status: 400 })
+    
+    await prisma.task.updateMany({
+      where: { assigneeId: id },
+      data: { assigneeId: null }
     })
 
-    const { password, ...safeMember } = member
-    return NextResponse.json(safeMember)
+    await prisma.member.delete({
+      where: { id },
+    })
+    
+    return NextResponse.json({ success: true })
   } catch (error: any) {
-    console.error("Profile update error:", error.message)
+    console.error("Failed to delete member:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
