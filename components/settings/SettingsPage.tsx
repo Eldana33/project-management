@@ -53,15 +53,14 @@ export default function SettingsPage() {
 
       const updatedUser = await res.json()
       
-      // Update local storage so the rest of the app sees the new name
+      // Update local storage
       localStorage.setItem('nexus_user', JSON.stringify(updatedUser))
       setUser(updatedUser)
       
       setIsSaved(true)
-      setPassword('') // Clear password field
+      setPassword('')
       setTimeout(() => setIsSaved(false), 2000)
       
-      // Refresh the page to update the layout sidebar if name changed
       router.refresh()
       window.location.reload()
 
@@ -81,19 +80,16 @@ export default function SettingsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        {/* Left Sidebar */}
         <div className="space-y-1">
           <button className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium bg-zinc-100 text-[#2a2f7a] rounded-md">
             <User size={16} /> Profile
           </button>
         </div>
 
-        {/* Right Content Area */}
         <div className="md:col-span-2 space-y-6">
           
           {error && <div className="p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-100">{error}</div>}
 
-          {/* Profile Section */}
           <div className="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-zinc-100">
               <h2 className="text-lg font-bold text-zinc-900">Profile Information</h2>
@@ -131,7 +127,6 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Save Button */}
           <div className="flex justify-end">
             <button 
               onClick={handleSave}
